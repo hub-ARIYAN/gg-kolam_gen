@@ -1,10 +1,7 @@
 // Exact zen‑kolam pattern data and helpers
 import { KolamCurvePattern } from '@/types/kolam';
-// Import the same JSON used by zen-kolam for a 1:1 match
-// Keeping it external avoids duplicating a huge JSON file
-// If you prefer, we can copy it into src/data later.
 // @ts-ignore - Vite supports JSON imports
-import kolamData from '../../zen-kolam/src/data/kolamPatternsData.json';
+import kolamData from './kolamPatternsData.json';
 
 export const KOLAM_CURVE_PATTERNS: KolamCurvePattern[] = kolamData.patterns.map((p: any) => ({
     id: p.id,
@@ -46,9 +43,9 @@ function generateCompatibilityMatrix(): { [key: number]: number[] } {
 
 export const SYMMETRY_TRANSFORMS = {
     horizontalInverse: [1, 2, 5, 4, 3, 9, 8, 7, 6, 10, 11, 12, 15, 14, 13, 16],
-    verticalInverse:   [1, 4, 3, 2, 5, 7, 6, 9, 8, 10, 11, 14, 13, 12, 15, 16],
-    rotation90:        [1, 3, 2, 5, 4, 6, 9, 8, 7, 11, 10, 13, 12, 15, 14, 16],
+    verticalInverse: [1, 4, 3, 2, 5, 7, 6, 9, 8, 10, 11, 14, 13, 12, 15, 16],
+    rotation90: [1, 3, 2, 5, 4, 6, 9, 8, 7, 11, 10, 13, 12, 15, 14, 16],
     diagonalSymmetric: [1, 6, 8, 16],
     horizontalSymmetric: [1, 2, 5, 10, 11, 12, 16],
-    verticalSymmetric:   [1, 3, 5, 10, 11, 14, 16],
+    verticalSymmetric: [1, 3, 5, 10, 11, 14, 16],
 };
