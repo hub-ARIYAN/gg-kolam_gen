@@ -1,0 +1,19 @@
+# Exclude frontend files from backend deployment
+node_modules/
+src/
+public/
+dist/
+*.config.js
+*.config.ts
+package.json
+package-lock.json
+bun.lockb
+tsconfig*.json
+.git/
+.gitignore
+.env.development
+README.md
+INTEGRATION_SUMMARY.md
+zen-kolam/
+Smart/
+Images/

@@ -1,0 +1,46 @@
+KOLAM ANALYSIS RESULTS
+   IMAGE PROCESSING:
+   Original size: (415, 512, 3)
+   Scale factor: 1.59
+   Skeleton pixels: 7344
+   DOT ANALYSIS:
+   Total dots detected: 76
+   - Blob detection: 0
+   - Contour detection: 0
+   Average dot radius: 5.9px
+   LATTICE STRUCTURE:
+   Type: OBLIQUE
+   Spacing: 55.0px
+   Rotation: 88.1°
+   Quality score: 24.0
+   Regularity: 1.00
+   Basis angle: 180.0°
+   GRAPH TOPOLOGY:
+   Nodes (junctions): 440
+   Edges (connections): 610
+   Average edge length: 12.2px
+   Average tortuosity: 2.19
+   CYCLES & LOOPS:
+   Total cycles found: 215
+   - Nested cycles: 72
+   Largest cycle area: 4048.0px²
+   - Highly regular cycles: 155
+   SYMMETRY PROPERTIES:
+   Rotational symmetry: 2-fold
+   Mirror symmetries: 4 axes
+   Mirror axis angles: ['0.0°', '46.3°', '133.7°']
+   FOREIGN ELEMENTS:
+   Non-lattice lines: 597
+   - Angle mismatches: 374
+   - Off-lattice endpoints: 223
+   PATTERN COMPLEXITY:
+   Pattern density: 0.000411
+   Density variation: 0.44
+   Connected components: 45
+   Average node degree: 2.8
+   Clustering coefficient: 0.370
+   Path complexity (mean): 3.44
+   Pattern completeness: 61.9%
+   Fractal dimension: 1.16
+   PATTERN SUMMARY:
+   Oblique lattice with spacing ≈55.0 px rotated 88.1°. 2-fold rotational symmetry. 4 mirror symmetries. 72 nested loops around central region. 155 highly regular cycles. 374 connecting lines at ≈64° to lattice. Pattern consists of 45 separate components. Pattern appears 62% complete.

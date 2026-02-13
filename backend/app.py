@@ -24,8 +24,14 @@ app.add_middleware(
         "http://127.0.0.1:8080",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "http://localhost:5173",      # Vite default dev server
         "https://*.appwrite.global",  # Appwrite Sites domains
         "https://*.appwrite.io",      # Alternative Appwrite domains
+        "https://*.onrender.com",     # Render static sites
+        "https://*.vercel.app",       # Vercel deployments
+        "https://*.netlify.app",      # Netlify deployments
+        # Add your production frontend URL here after deployment
+        # "https://your-frontend-domain.com",
         "*"  # Allow all origins for now (can restrict later)
     ],
     allow_credentials=True,
@@ -35,6 +41,22 @@ app.add_middleware(
 
 # Mount static files for direct access
 app.mount("/static", StaticFiles(directory=RESULTS_DIR), name="static")
+
+
+@app.get("/")
+async def health_check():
+    """Health check endpoint for Render and monitoring."""
+    return {
+        "status": "healthy",
+        "service": "Kolam Codex Math API",
+        "version": "1.0.0",
+        "endpoints": {
+            "analyze": "/analyze/",
+            "kolam_patterns": "/kolam/patterns",
+            "kolam_generate": "/kolam/generate",
+            "kolam_export": "/kolam/export/{pattern_id}"
+        }
+    }
 
 
 @app.post("/analyze/")

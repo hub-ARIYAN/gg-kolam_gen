@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap');
 
-@tailwind base;
+@tailwind base; 
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; 
 
 /* Indian Cultural Kolam Design System with Modern Neon Accents */
 
@@ -196,5 +196,64 @@
     border-color: hsl(var(--primary));
     background: hsl(var(--primary) / 0.1);
     box-shadow: var(--shadow-primary);
+  }
+
+  /* Custom Scrollbar Styling */
+  .equations-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--mystic) / 0.6) hsl(var(--card));
+  }
+
+  .equations-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .equations-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--card));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--border));
+  }
+
+  .equations-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, hsl(var(--mystic)), hsl(var(--mystic-glow)));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--mystic) / 0.3);
+    transition: var(--transition-smooth);
+  }
+
+  .equations-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, hsl(var(--mystic-glow)), hsl(var(--neon)));
+    box-shadow: 0 0 10px hsl(var(--mystic) / 0.5);
+  }
+
+  .equations-scrollbar::-webkit-scrollbar-corner {
+    background: hsl(var(--card));
+  }
+
+  /* MINDMESH Logo Fixed Position */
+  .mindmesh-logo {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 120px;
+    height: 120px;
+    z-index: 1000;
+    opacity: 0.9;
+    transition: var(--transition-smooth);
+    border-radius: 12px;
+    box-shadow: 0 6px 20px hsl(var(--background) / 0.4);
+  }
+
+  .mindmesh-logo:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px hsl(var(--primary) / 0.3);
+  }
+
+  .mindmesh-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
   }
 }

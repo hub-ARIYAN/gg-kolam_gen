@@ -3,15 +3,17 @@ import { Upload, FileImage, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import axios from 'axios';
 
 interface KolamUploadProps {
-  onUpload: (file: File) => void;
+  onUpload: (result: any) => void;
   isAnalyzing?: boolean;
 }
 
 export const KolamUpload: React.FC<KolamUploadProps> = ({ onUpload, isAnalyzing = false }) => {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [result, setResult] = useState<any>(null);
   const { toast } = useToast();
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -23,6 +25,8 @@ export const KolamUpload: React.FC<KolamUploadProps> = ({ onUpload, isAnalyzing 
       setDragActive(false);
     }
   }, []);
+
+  const [analyzing, setAnalyzing] = useState(false);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -49,16 +53,36 @@ export const KolamUpload: React.FC<KolamUploadProps> = ({ onUpload, isAnalyzing 
     }
   }, []);
 
-  const handleAnalyze = useCallback(() => {
+  const handleAnalyze = useCallback(async () => {
     if (selectedFile) {
-      onUpload(selectedFile);
-      toast({
-        title: "Analysis started",
-        description: "Your kolam is being analyzed...",
-      });
+      setAnalyzing(true);   // 🔹 keep spinner ON
+      try {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        toast({
+          title: "Analysis started",
+          description: "Your kolam is being analyzed...",
+        });
+
+        const res = await axios.post("http://localhost:8000/analyze/", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        setResult(res.data);
+        onUpload(res.data); // Pass the result, not the file
+        // 🔹 Don't reset analyzing here, next page will replace component anyway
+      } catch (error) {
+        setAnalyzing(false); // only stop spinner if there’s an error
+        toast({
+          title: "Error",
+          description: "Something went wrong during analysis.",
+          variant: "destructive",
+        });
+      }
     }
   }, [selectedFile, onUpload, toast]);
-
+  
   return (
     <div className="space-y-6">
       <Card className="cultural-border sacred-glow">
@@ -84,10 +108,10 @@ export const KolamUpload: React.FC<KolamUploadProps> = ({ onUpload, isAnalyzing 
                   </div>
                   <Button 
                     onClick={handleAnalyze}
-                    disabled={isAnalyzing}
+                    disabled={analyzing}
                     className="bg-gradient-to-r from-primary to-primary-glow hover:shadow-lg transition-all duration-300"
                   >
-                    {isAnalyzing ? (
+                    {analyzing ? (
                       <>
                         <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
                         Analyzing...
@@ -98,7 +122,7 @@ export const KolamUpload: React.FC<KolamUploadProps> = ({ onUpload, isAnalyzing 
                         Analyze Kolam
                       </>
                     )}
-                  </Button>
+                </Button>
                 </div>
               ) : (
                 <>

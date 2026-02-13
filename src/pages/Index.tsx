@@ -1,40 +1,39 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Calculator, Palette, ExternalLink } from 'lucide-react';
-import { KolamUpload } from '@/components/KolamUpload';
+import { Sparkles, Calculator, Palette, ExternalLink, Wand2 } from 'lucide-react';
+import { useAnalysis } from '../context/AnalysisContext';
+import { KolamUpload } from '../components/KolamUpload';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import heroImage from '@/assets/kolam-hero.jpg';
+import axios from 'axios';
 
 const Index = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const navigate = useNavigate();
+  const { setResult } = useAnalysis();
 
-  const handleUpload = async (file: File) => {
-    setIsAnalyzing(true);
-    
-    // Simulate analysis process - will be replaced with actual backend integration
-    setTimeout(() => {
-      setIsAnalyzing(false);
-      navigate('/analysis');
-    }, 3000);
+  const handleUploadResult = (result: any) => {
+    setResult(result);
+    setIsAnalyzing(false);
+    navigate('/analysis');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-card">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{ backgroundImage: `url(${heroImage})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-neon/20" />
-        
+
         <div className="relative container mx-auto px-4 py-16">
           <div className="text-center space-y-6 max-w-4xl mx-auto">
             <div className="space-y-4">
               <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-secondary to-neon bg-clip-text text-transparent">
-                कोलम विश्लेषक
+                கோலம் அனலைசர்
               </h1>
               <h2 className="text-3xl md:text-4xl font-semibold text-foreground font-devanagari">
                 Kolam Analyzer
@@ -43,7 +42,7 @@ const Index = () => {
                 Discover the sacred geometry, cultural significance, and mathematical beauty hidden within traditional kolam patterns
               </p>
             </div>
-            
+
             <div className="flex flex-wrap justify-center gap-4 text-sm">
               <div className="flex items-center gap-2 bg-card/50 px-4 py-2 rounded-full">
                 <Palette className="w-4 h-4 text-primary" />
@@ -73,8 +72,29 @@ const Index = () => {
               Upload an image of your kolam to unlock its cultural stories and mathematical secrets
             </p>
           </div>
-          
-          <KolamUpload onUpload={handleUpload} isAnalyzing={isAnalyzing} />
+
+          <KolamUpload onUpload={handleUploadResult} isAnalyzing={isAnalyzing} />
+
+          {/* Alternative Actions */}
+          <div className="text-center space-y-4">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border/50" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or</span>
+              </div>
+            </div>
+            
+            <Button 
+              onClick={() => navigate('/generator')} 
+              variant="outline" 
+              className="w-full max-w-md"
+            >
+              <Wand2 className="w-4 h-4 mr-2" />
+              Generate New Kolam Patterns
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -128,7 +148,7 @@ const Index = () => {
             </p>
             <div className="flex justify-center items-center gap-2 text-sm">
               <span className="text-primary">•</span>
-              <span className="font-devanagari">सत्यं शिवं सुन्दरम्</span>
+              <span className="font-devanagari">சத்யம் ஷிவம் சுந்தராம்</span>
               <span className="text-primary">•</span>
             </div>
           </div>
