@@ -65,7 +65,7 @@ export const KolamUpload: React.FC<KolamUploadProps> = ({ onUpload, isAnalyzing 
           description: "Your kolam is being analyzed...",
         });
 
-        const res = await axios.post("http://localhost:8000/analyze/", formData, {
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/analyze/`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
@@ -82,15 +82,14 @@ export const KolamUpload: React.FC<KolamUploadProps> = ({ onUpload, isAnalyzing 
       }
     }
   }, [selectedFile, onUpload, toast]);
-  
+
   return (
     <div className="space-y-6">
       <Card className="cultural-border sacred-glow">
         <CardContent className="p-8">
           <div
-            className={`upload-zone kolam-pattern p-12 rounded-lg text-center transition-all ${
-              dragActive ? 'dragover' : ''
-            }`}
+            className={`upload-zone kolam-pattern p-12 rounded-lg text-center transition-all ${dragActive ? 'dragover' : ''
+              }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
@@ -106,7 +105,7 @@ export const KolamUpload: React.FC<KolamUploadProps> = ({ onUpload, isAnalyzing 
                       {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
-                  <Button 
+                  <Button
                     onClick={handleAnalyze}
                     disabled={analyzing}
                     className="bg-gradient-to-r from-primary to-primary-glow hover:shadow-lg transition-all duration-300"
@@ -122,7 +121,7 @@ export const KolamUpload: React.FC<KolamUploadProps> = ({ onUpload, isAnalyzing 
                         Analyze Kolam
                       </>
                     )}
-                </Button>
+                  </Button>
                 </div>
               ) : (
                 <>

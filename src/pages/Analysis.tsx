@@ -6,6 +6,8 @@ import { GeneratedKolams } from '@/components/GeneratedKolams';
 import { useNavigate } from 'react-router-dom';
 import { useAnalysis } from "../context/AnalysisContext";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const Analysis: React.FC = () => {
   const navigate = useNavigate();
   const { result } = useAnalysis();
@@ -18,10 +20,10 @@ export const Analysis: React.FC = () => {
       // Extract filename from URL
       const analysisFilename = result.analysis_txt_url?.split('/').pop();
       const equationsFilename = result.equations_txt_url?.split('/').pop();
-      
+
       // Fetch analysis.txt using the new /files endpoint
       if (analysisFilename) {
-        fetch(`http://localhost:8000/files/${analysisFilename}`)
+        fetch(`${API_URL}/files/${analysisFilename}`)
           .then(res => {
             if (!res.ok) {
               throw new Error(`HTTP ${res.status}: ${res.statusText}`);
@@ -39,7 +41,7 @@ export const Analysis: React.FC = () => {
 
       // Fetch equations.txt using the new /files endpoint
       if (equationsFilename) {
-        fetch(`http://localhost:8000/files/${equationsFilename}`)
+        fetch(`${API_URL}/files/${equationsFilename}`)
           .then(res => {
             if (!res.ok) {
               throw new Error(`HTTP ${res.status}: ${res.statusText}`);
@@ -63,8 +65,8 @@ export const Analysis: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-card">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => navigate('/')}
             className="sacred-glow"
           >
@@ -78,18 +80,18 @@ export const Analysis: React.FC = () => {
             </p>
           </div>
         </div>
-        
-        
+
+
         <div className="space-y-12">
           <KolamResults
             analysisData={{
-              analysisImageUrl: result.analysis_image_url ? `http://localhost:8000/files/${result.analysis_image_url.split('/').pop()}` : undefined,
+              analysisImageUrl: result.analysis_image_url ? `${API_URL}/files/${result.analysis_image_url.split('/').pop()}` : undefined,
               mathematicalAnalysis: analysisText,
               equations: equationsText,
-              desmosUrl: result.desmos_url ? `http://localhost:8000/files/${result.desmos_url.split('/').pop()}` : undefined,
-              analysisTxtUrl: result.analysis_txt_url ? `http://localhost:8000/download/${result.analysis_txt_url.split('/').pop()}` : undefined,
-              equationsTxtUrl: result.equations_txt_url ? `http://localhost:8000/download/${result.equations_txt_url.split('/').pop()}` : undefined,
-              imageDownloadUrl: result.analysis_image_url ? `http://localhost:8000/download/${result.analysis_image_url.split('/').pop()}` : undefined,
+              desmosUrl: result.desmos_url ? `${API_URL}/files/${result.desmos_url.split('/').pop()}` : undefined,
+              analysisTxtUrl: result.analysis_txt_url ? `${API_URL}/download/${result.analysis_txt_url.split('/').pop()}` : undefined,
+              equationsTxtUrl: result.equations_txt_url ? `${API_URL}/download/${result.equations_txt_url.split('/').pop()}` : undefined,
+              imageDownloadUrl: result.analysis_image_url ? `${API_URL}/download/${result.analysis_image_url.split('/').pop()}` : undefined,
             }}
           />
           <GeneratedKolams />
