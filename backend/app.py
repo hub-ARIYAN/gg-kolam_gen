@@ -19,23 +19,9 @@ os.makedirs(RESULTS_DIR, exist_ok=True)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8080",
-        "http://127.0.0.1:8080",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:5173",      # Vite default dev server
-        "https://*.appwrite.global",  # Appwrite Sites domains
-        "https://*.appwrite.io",      # Alternative Appwrite domains
-        "https://*.onrender.com",     # Render static sites
-        "https://*.vercel.app",       # Vercel deployments
-        "https://*.netlify.app",      # Netlify deployments
-        # Add your production frontend URL here after deployment
-        # "https://your-frontend-domain.com",
-        "*"  # Allow all origins for now (can restrict later)
-    ],
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
