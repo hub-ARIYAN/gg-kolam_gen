@@ -77,10 +77,10 @@ async def analyze_kolam(file: UploadFile = File(...), request: Request = None):
     host = str(request.base_url).rstrip("/") if request else "http://localhost:8000"
 
     return {
-        "analysis_image_url": f"/download/{base_name}_analysis_visualization.png",
-        "analysis_txt_url": f"/download/{base_name}_analysis.txt",
-        "equations_txt_url": f"/download/{base_name}_equations.txt",
-        "desmos_url": f"/download/{base_name}_output_eq.html",
+        "analysis_image_url": f"{host}/download/{base_name}_analysis_visualization.png",
+        "analysis_txt_url": f"{host}/download/{base_name}_analysis.txt",
+        "equations_txt_url": f"{host}/download/{base_name}_equations.txt",
+        "desmos_url": f"{host}/download/{base_name}_output_eq.html",
     }
 
 
