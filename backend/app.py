@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, Response, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
-RESULTS_DIR = os.path.join(os.path.dirname(__file__), "../public/results")
+RESULTS_DIR = os.environ.get("RESULTS_DIR", os.path.join(os.path.dirname(__file__), "../public/results"))
 RESULTS_DIR = os.path.abspath(RESULTS_DIR)
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
