@@ -1,11 +1,13 @@
 import os
 import sys
 import subprocess
+from subprocess import CalledProcessError
 import mimetypes
 import urllib.parse
 import json
 import time
-from typing import Dict, Any
+import tempfile
+from typing import Dict, Any, Optional
 
 from fastapi import FastAPI, UploadFile, File, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,7 +15,8 @@ from fastapi.responses import FileResponse, Response, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
-RESULTS_DIR = os.environ.get("RESULTS_DIR", os.path.join(os.path.dirname(__file__), "../public/results"))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+RESULTS_DIR = os.environ.get("RESULTS_DIR", os.path.join(BASE_DIR, "..", "public", "results"))
 RESULTS_DIR = os.path.abspath(RESULTS_DIR)
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
@@ -47,27 +50,85 @@ async def health_check():
 
 @app.post("/analyze/")
 async def analyze_kolam(file: UploadFile = File(...), request: Request = None):
-    image_path = os.path.join(RESULTS_DIR, file.filename)
+    # Save uploaded file to RESULTS_DIR with a timestamp to avoid collisions
+    original_name = os.path.basename(file.filename)
+    name_root, ext = os.path.splitext(original_name)
+    safe_root = name_root.replace(" ", "_")
+    timestamp = int(time.time())
+    saved_name = f"{safe_root}_{timestamp}{ext}"
+    image_path = os.path.join(RESULTS_DIR, saved_name)
 
-    # Save uploaded file
     with open(image_path, "wb") as f:
         f.write(await file.read())
 
-    # Run Kolam_Tester.py
-    subprocess.run([sys.executable, "backend/Kolam_Tester.py", image_path, RESULTS_DIR], check=True)
-
-    # Run main_eq_conv.py
-    subprocess.run([sys.executable, "backend/main_eq_conv.py", image_path, RESULTS_DIR], check=True)
-
+    # Base name for result files and logs
     base_name = os.path.splitext(os.path.basename(image_path))[0]
+
+    # Build absolute script paths
+    kolam_tester = os.path.join(BASE_DIR, "Kolam_Tester.py")
+    main_eq_conv = os.path.join(BASE_DIR, "main_eq_conv.py")
+
+    # Helper to run a subprocess and capture output
+    def run_script(script_path: str, args: list) -> Optional[Dict[str, str]]:
+        try:
+            res = subprocess.run([sys.executable, script_path] + args, capture_output=True, text=True, check=True)
+            return {"stdout": res.stdout, "stderr": res.stderr}
+        except CalledProcessError as e:
+            return {"error": str(e), "stdout": getattr(e, 'stdout', ''), "stderr": getattr(e, 'stderr', '')}
+
+    # Run Kolam_Tester
+    tester_res = run_script(kolam_tester, [image_path, RESULTS_DIR])
+    if tester_res is None or tester_res.get("error"):
+        return JSONResponse(status_code=500, content={
+            "status": "error",
+            "step": "kolam_tester",
+            "details": tester_res or {"error": "unknown error"}
+        })
+
+    # Save tester stdout/stderr for debugging
+    try:
+        with open(os.path.join(RESULTS_DIR, f"{base_name}_kolam_tester.log"), "w", encoding="utf-8") as lf:
+            lf.write(tester_res.get("stdout", ""))
+            lf.write("\n--- STDERR ---\n")
+            lf.write(tester_res.get("stderr", ""))
+    except Exception:
+        pass
+
+    # Run main_eq_conv
+    conv_res = run_script(main_eq_conv, [image_path, RESULTS_DIR])
+    if conv_res is None or conv_res.get("error"):
+        return JSONResponse(status_code=500, content={
+            "status": "error",
+            "step": "main_eq_conv",
+            "details": conv_res or {"error": "unknown error"}
+        })
+
+    # Save converter stdout/stderr for debugging
+    try:
+        with open(os.path.join(RESULTS_DIR, f"{base_name}_main_eq_conv.log"), "w", encoding="utf-8") as lf:
+            lf.write(conv_res.get("stdout", ""))
+            lf.write("\n--- STDERR ---\n")
+            lf.write(conv_res.get("stderr", ""))
+    except Exception:
+        pass
+
     host = str(request.base_url).rstrip("/") if request else "http://localhost:8000"
 
-    return {
-        "analysis_image_url": f"{host}/download/{base_name}_analysis_visualization.png",
-        "analysis_txt_url": f"{host}/download/{base_name}_analysis.txt",
-        "equations_txt_url": f"{host}/download/{base_name}_equations.txt",
-        "desmos_url": f"{host}/download/{base_name}_output_eq.html",
+    # Provide both filenames and download URLs for frontend compatibility
+    filenames = {
+        "analysis_image": f"{base_name}_analysis_visualization.png",
+        "analysis_txt": f"{base_name}_analysis.txt",
+        "equations_txt": f"{base_name}_equations.txt",
+        "desmos_html": f"{base_name}_output_eq.html",
     }
+
+    download_urls = {k: f"{host}/files/{v}" for k, v in filenames.items()}
+
+    return JSONResponse(content={
+        "status": "success",
+        "filenames": filenames,
+        "download_urls": download_urls
+    })
 
 
 @app.get("/download/{filename}")
